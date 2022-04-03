@@ -12,16 +12,16 @@ export class CatService {
     private catRepository: Repository<Cat>,
   ) {}
 
-  create(createCatDto: CreateCatDto) {
+  async create(createCatDto: CreateCatDto): Promise<Cat> {
     const cat = new Cat
     cat.name = createCatDto.name
     cat.age = createCatDto.age
     cat.description = createCatDto.description
-    return this.catRepository.save(cat)
+    return await this.catRepository.save(cat)
   }
 
   async findAll(): Promise<Cat[]> {
-    return this.catRepository.find()
+    return await this.catRepository.find()
   }
 
   async findOne(id: number): Promise<Cat> {
@@ -40,14 +40,14 @@ export class CatService {
     cat.name = updateCatDto.name
     cat.age = updateCatDto.age
     cat.description = updateCatDto.description
-    return this.catRepository.save(cat)
+    return await this.catRepository.save(cat)
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<Cat> {
     const cat = await this.catRepository.findOne(id)
     if (cat == null) {
       throw new CatNotFoundException()
     }
-    return this.catRepository.remove(cat)
+    return await this.catRepository.remove(cat)
   }
 }
