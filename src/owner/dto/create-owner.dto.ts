@@ -1,4 +1,5 @@
 import { IsNotEmpty } from "class-validator"
+import { AddressDto } from "./address.dto"
 
 export class CreateOwnerDto {
     @IsNotEmpty()
@@ -7,6 +8,5 @@ export class CreateOwnerDto {
     @IsNotEmpty()
     phone: string
 
-    @IsNotEmpty()
-    address: string
+    address: AddressDto
 }

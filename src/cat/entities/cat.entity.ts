@@ -1,5 +1,5 @@
 import { Owner } from "src/owner/entities/owner.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Cat {
@@ -19,5 +19,6 @@ export class Cat {
     ownerId: number
 
     @ManyToOne(() => Owner, owner => owner.cats)
+    @JoinColumn()
     owner: Owner;
 }

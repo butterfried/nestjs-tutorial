@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { AddCatDto } from './dto/add-cat.dto';
 import { CreateOwnerDto } from './dto/create-owner.dto';
 import { UpdateOwnerDto } from './dto/update-owner.dto';
+import { Address } from './entities/address.entity';
 import { Owner } from './entities/owner.entity';
 import { CatAlreadyHasOwnerException } from './exception/cat-already-has-owner.exception';
 import { CatAlreadyOwnByThisOwnerException } from './exception/cat-already-own-by-this-owner.exception';
@@ -18,13 +19,28 @@ export class OwnerService {
     private ownerRepository: Repository<Owner>,
     @Inject('CAT_REPOSITORY')
     private catRepository: Repository<Cat>,
+    @Inject('ADDRESS_REPOSITORY')
+    private addressRepository: Repository<Address>,
   ) {}
 
   async create(createOwnerDto: CreateOwnerDto): Promise<Owner> {
     const owner = new Owner
     owner.name = createOwnerDto.name
     owner.phone = createOwnerDto.phone
-    owner.address = createOwnerDto.address
+
+    if (createOwnerDto.address != null) {
+      let address = new Address
+      let addressDto = createOwnerDto.address
+      address.address = addressDto.address
+      address.subDistrict = addressDto.subDistrict
+      address.district = addressDto.district
+      address.province = addressDto.province
+
+      owner.address = address
+
+      await this.addressRepository.save(address)
+    }
+
     return await this.ownerRepository.save(owner)
   }
 
@@ -47,7 +63,18 @@ export class OwnerService {
     }
     owner.name = updateOwnerDto.name
     owner.phone = updateOwnerDto.phone
-    owner.address = updateOwnerDto.address
+    if (updateOwnerDto.address != null) {
+      if (owner.address == null) {
+        owner.address = new Address
+      }
+      owner.address.address = updateOwnerDto.address.address
+      owner.address.subDistrict = updateOwnerDto.address.subDistrict
+      owner.address.district = updateOwnerDto.address.district
+      owner.address.province = updateOwnerDto.address.province
+
+      await this.addressRepository.save(owner.address)
+    }
+
     return await this.ownerRepository.save(owner)
   }
 

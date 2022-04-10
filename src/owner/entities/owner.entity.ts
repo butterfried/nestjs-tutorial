@@ -1,5 +1,6 @@
 import { Cat } from "src/cat/entities/cat.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Address } from "./address.entity";
 
 @Entity()
 export class Owner {
@@ -12,9 +13,10 @@ export class Owner {
     @Column({ length: 10 })
     phone: string;
 
-    @Column({ length: 500 })
-    address: string;
-
     @OneToMany(() => Cat, (cat) => cat.owner, {lazy: true})
     cats: Cat[];
+
+    @OneToOne(() => Address, (address) => address.owner, {nullable: true, eager: true})
+    @JoinColumn()
+    address: Address
 }
